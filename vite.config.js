@@ -4,23 +4,21 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  server: {
-    fs: {
-      // Allow serving files from one level up to the project root
-      allow: ['..']
-    },
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false
-      }
-    }
-  },
+  base: '/', // This will be updated to your S3 bucket URL when deploying
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: true
+    sourcemap: false, // Disable sourcemaps for production
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': ['vue', 'vue-router']
+        }
+      }
+    }
   },
-  assetsInclude: ['**/*.yaml']
+  server: {
+    host: true,
+    strictPort: true
+  }
 })
